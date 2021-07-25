@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">quizz-app</string>
+    <string name="createBankButton">Create Bank</string>
+    <string name="deleteBankButton">Delete Bank</string>
+    <string name="addQuestion">Add Question</string>
+    <string name="removeQuestion">Remove Question</string>
+    <string name="listViewText">Banks</string>
 </resources>

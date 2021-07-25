@@ -1,43 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingHorizontal="10dp"
+    android:paddingHorizontal="5dp"
+    android:paddingVertical="5dp"
     tools:context=".TeacherActivity">
 
-    <Button
-        android:id="@+id/createBankButton"
-        android:layout_width="fill_parent"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:text="Create Question Bank"
-        android:textSize="20sp" />
+        android:layout_weight="0.15"
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/DeleteBank"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:text="Delete Question Bank"
-        android:textSize="20sp" />
-
-    <Button
-        android:id="@+id/AddQuestion"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:text="Add Question"
-        android:textSize="20sp" />
-
-    <Button
-            android:id="@+id/RemoveQuestion"
-            android:layout_width="fill_parent"
-            android:layout_height="0dp"
+        <Button
+            android:id="@+id/createBankButton"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
             android:layout_weight="1"
-            android:text="Remove Question"
-            android:textSize="20sp" />
+            android:layout_margin="5dp"
+            android:text="@string/createBankButton"
+            android:textSize="12sp"
+            style="?android:attr/buttonBarButtonStyle"
+            tools:ignore="NestedWeights" />
+
+        <Button
+            android:id="@+id/deleteBank"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:text="@string/deleteBankButton"
+            android:textSize="12sp"
+            style="?android:attr/buttonBarButtonStyle" />
+
+        <Button
+            android:id="@+id/addQuestion"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:text="@string/addQuestion"
+            android:textSize="12sp"
+            style="?android:attr/buttonBarButtonStyle" />
+
+        <Button
+            android:id="@+id/removeQuestion"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:text="@string/removeQuestion"
+            android:textSize="12sp"
+            style="?android:attr/buttonBarButtonStyle" />
+
+    </LinearLayout>
+
+    <Switch
+        android:id="@+id/switch1"
+        android:layout_width="100dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="@string/listViewText"
+        tools:ignore="UseSwitchCompatOrMaterialXml" />
 
 </LinearLayout>

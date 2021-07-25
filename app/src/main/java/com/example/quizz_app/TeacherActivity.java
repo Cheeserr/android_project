@@ -21,15 +21,6 @@ import java.util.ArrayList;
 
 public class TeacherActivity extends AppCompatActivity {
 
-    SQLiteOpenHelper databaseHelper = new DatabaseHelper(this);
-    SQLiteDatabase db = databaseHelper.getWritableDatabase();
-    /**try {
-
-    } catch(SQLiteException e){
-        Toast toast = Toast.makeText(this, "Database unavailable", Toast.LENGTH_SHORT);
-        toast.show();
-    } */
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +28,7 @@ public class TeacherActivity extends AppCompatActivity {
         setContentView(R.layout.activity_teacher_view);
 
         Button teacherButton = findViewById(R.id.createBankButton);
-        teacherButton.setOnClickListener(v -> createBank());
+        //teacherButton.setOnClickListener(v -> createBank());
     }
 
 
