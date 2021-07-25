@@ -24,14 +24,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE QUESTIONS ("
                 + "_id INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + "BANKID INTEGER, "
-                + "QUESTION TEXT, "
-                + "ANSWEAR TEXT);");
+                + "QUESTION TEXT);");
 
         ContentValues bankValues = new ContentValues();
 
-        bankValues.put("Name", "Biology");
+        bankValues.put("NAME", "Biology");
         bankValues.put("NUMBEROFQUESTIONS", 5);
         db.insert("QUESTIONBANKS", null, bankValues);
+
+        ContentValues questionValues = new ContentValues();
+
+        questionValues.put("BANKID", "0");
+        questionValues.put("QUESTION", "Dokad noca tupta jez");
+        db.insert("QUESTIONS", null, questionValues);
     }
 
     @Override
