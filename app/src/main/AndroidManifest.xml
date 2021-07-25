@@ -9,8 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Quizzapp">
-        <activity android:name=".StudentView"></activity>
-        <activity android:name=".TeacherView" />
+        <activity android:name=".StudentActivity"></activity>
+        <activity android:name=".TeacherActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingHorizontal="10dp"
-    tools:context=".TeacherView">
+    tools:context=".TeacherActivity">
 
     <Button
         android:id="@+id/createBankButton"

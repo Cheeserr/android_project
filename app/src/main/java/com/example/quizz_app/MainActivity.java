@@ -23,12 +23,12 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void openTeacherActivity(){
-        Intent intent = new Intent(this, TeacherView.class);
+        Intent intent = new Intent(this, TeacherActivity.class);
         startActivity(intent);
     }
 
     public void openStudentActivity(){
-        Intent intent = new Intent(this, StudentView.class);
+        Intent intent = new Intent(this, StudentActivity.class);
         startActivity(intent);
     }
 }
