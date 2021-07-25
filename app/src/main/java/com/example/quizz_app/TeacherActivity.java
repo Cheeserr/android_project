@@ -14,7 +14,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.text.InputType;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -39,6 +38,7 @@ public class TeacherActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.recyclerView);
         bankAdapter bankAdapter = new bankAdapter(this, data1, data2, data3);
+        bankAdapter questionAdapter = new bankAdapter(this, data1, data2, data3);
         recyclerView.setAdapter(bankAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -57,15 +57,15 @@ public class TeacherActivity extends AppCompatActivity {
 
 
         @SuppressLint("UseSwitchCompatOrMaterialCode") Switch simpleSwitch = findViewById(R.id.viewSwitch);
-        simpleSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @SuppressLint("SetTextI18n")
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    simpleSwitch.setText("Questions");
-                }else{
-                    simpleSwitch.setText("Banks");
-                }
+        simpleSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(isChecked){
+                simpleSwitch.setText(R.string.questionListViewText);
+                listQuestions();
+                recyclerView.setAdapter(questionAdapter);
+            }else{
+                simpleSwitch.setText(R.string.listViewText);
+                listBanks();
+                recyclerView.setAdapter(bankAdapter);
             }
         });
     }
@@ -87,7 +87,6 @@ public class TeacherActivity extends AppCompatActivity {
     }
 
     void createBank(String input){
-
         try {
             SQLiteDatabase db = databaseHelper.getWritableDatabase();
             ContentValues bankValues = new ContentValues();
@@ -110,12 +109,21 @@ public class TeacherActivity extends AppCompatActivity {
     // FR3
     void listQuestions(){
         try {
+            data1.clear();
+            data2.clear();
+            data3.clear();
             SQLiteDatabase db = databaseHelper.getReadableDatabase();
             Cursor cursor = db.query("QUESTIONS", new String[] {"_id","BANKID","QUESTION"},
                     null, null, null, null, null);
             if(cursor.moveToFirst()){
-                int bankID = cursor.getInt(0);
-                String question = cursor.getString(1);
+                data1.add(cursor.getString(2));
+                data2.add(cursor.getInt(1));
+                data3.add(cursor.getInt(0));
+            }
+            while(cursor.moveToNext()){
+                data1.add(cursor.getString(2));
+                data2.add(cursor.getInt(1));
+                data3.add(cursor.getInt(0));
             }
             cursor.close();
             db.close();

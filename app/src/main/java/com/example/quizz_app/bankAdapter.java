@@ -48,7 +48,6 @@ public class bankAdapter extends RecyclerView.Adapter<bankAdapter.MyViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull bankAdapter.MyViewHolder holder, int position) {
-        System.out.print("the position is !!!!!!!!!!!!!!!! " + position);
         holder.myText1.setText(String.valueOf(data3.get(position)));
         holder.myText2.setText(data1.get(position));
         holder.myText3.setText(String.valueOf(data2.get(position)));

@@ -5,4 +5,5 @@
     <string name="addQuestion">Add Question</string>
     <string name="removeQuestion">Remove Question</string>
     <string name="listViewText">Banks</string>
+    <string name="questionListViewText">Questions</string>
 </resources>
