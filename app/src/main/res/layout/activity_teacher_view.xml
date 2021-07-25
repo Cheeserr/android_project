@@ -58,11 +58,16 @@
     </LinearLayout>
 
     <Switch
-        android:id="@+id/switch1"
+        android:id="@+id/viewSwitch"
         android:layout_width="100dp"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_weight="0.1"
         android:text="@string/listViewText"
         tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
 </LinearLayout>
