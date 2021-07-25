@@ -14,12 +14,15 @@ import android.widget.Button;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 public class TeacherActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
-    String[] data1;
-    String[] data2;
-    int[] data3;
+    ArrayList<String> data1 = new ArrayList<>();
+    ArrayList<Integer> data2 = new ArrayList<>();
+    ArrayList<Integer> data3 = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +41,7 @@ public class TeacherActivity extends AppCompatActivity {
 
 
 
-        Switch simpleSwitch = findViewById(R.id.viewSwitch);
+        //Switch simpleSwitch = findViewById(R.id.viewSwitch);
     }
 
 
@@ -92,19 +95,19 @@ public class TeacherActivity extends AppCompatActivity {
         SQLiteOpenHelper databaseHelper = new DatabaseHelper(this);
         try {
         SQLiteDatabase db = databaseHelper.getReadableDatabase();
-        Cursor cursor = db.query("QUESTIONBANKS", new String[] {"_id","NAME","NUMBEROFQUESTIONS"},
+        Cursor cursor = db.query("QUESTIONBANKS", new String[] {"NAME","NUMBEROFQUESTIONS"},
                 null, null, null, null, null);
-        int i = 1;
+        int i = 0;
         if(cursor.moveToFirst()){
-            data1[i] = cursor.getString(1);
-            data2[i] = cursor.getString(2);
-            data3[i] = i;
+            data1.add(cursor.getString(0));
+            data2.add(cursor.getInt(1));
+            data3.add(i);
             i++;
         }
         while(cursor.moveToNext()){
-            data1[i] = cursor.getString(0);
-            data2[i] = cursor.getString(1);
-            data3[i] = i;
+            data1.add(cursor.getString(0));
+            data2.add(cursor.getInt(1));
+            data3.add(i);
             i++;
         }
         cursor.close();
