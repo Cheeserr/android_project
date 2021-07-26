@@ -37,8 +37,8 @@ public class TeacherActivity extends AppCompatActivity {
         listBanks();
 
         recyclerView = findViewById(R.id.recyclerView);
-        bankAdapter bankAdapter = new bankAdapter(this, data1, data2, data3);
-        bankAdapter questionAdapter = new bankAdapter(this, data1, data2, data3);
+        BankAdapter bankAdapter = new BankAdapter(this, data1, data2, data3);
+        BankAdapter questionAdapter = new BankAdapter(this, data1, data2, data3);
         recyclerView.setAdapter(bankAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 

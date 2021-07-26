@@ -11,14 +11,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class bankAdapter extends RecyclerView.Adapter<bankAdapter.MyViewHolder> {
+public class BankAdapter extends RecyclerView.Adapter<BankAdapter.MyViewHolder> {
 
     ArrayList<String> data1;
     ArrayList<Integer> data2;
     ArrayList<Integer> data3;
     Context context;
 
-    public bankAdapter(Context ct, ArrayList<String> s1, ArrayList<Integer> s2, ArrayList<Integer> s3){
+    public BankAdapter(Context ct, ArrayList<String> s1, ArrayList<Integer> s2, ArrayList<Integer> s3){
         context = ct;
         data1 = s1;
         data2 = s2;
@@ -47,7 +47,7 @@ public class bankAdapter extends RecyclerView.Adapter<bankAdapter.MyViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(@NonNull bankAdapter.MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull BankAdapter.MyViewHolder holder, int position) {
         holder.myText1.setText(String.valueOf(data3.get(position)));
         holder.myText2.setText(data1.get(position));
         holder.myText3.setText(String.valueOf(data2.get(position)));
