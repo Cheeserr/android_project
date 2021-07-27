@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class BankAdapter extends RecyclerView.Adapter<BankAdapter.MyViewHolder> {
+    static int row_index = -1;
 
     ArrayList<QuestionBank> mQuestionBanks;
     Context context;
@@ -26,7 +27,7 @@ public class BankAdapter extends RecyclerView.Adapter<BankAdapter.MyViewHolder> 
         this.mOnNoteListener = onNoteListener;
     }
 
-    public static class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         TextView idText, nameText, extraText;
         OnNoteListener onNoteListener;
@@ -43,8 +44,10 @@ public class BankAdapter extends RecyclerView.Adapter<BankAdapter.MyViewHolder> 
         }
 
         @Override
-        public void onClick(View v) {
+        public void onClick(View itemView) {
             onNoteListener.onNoteClick(getAdapterPosition());
+            row_index = getAdapterPosition();
+            notifyDataSetChanged();
         }
     }
 
@@ -69,6 +72,20 @@ public class BankAdapter extends RecyclerView.Adapter<BankAdapter.MyViewHolder> 
         else
         {
             holder.itemView.findViewById(R.id.card).setBackgroundColor(Color.LTGRAY);
+        }
+
+
+        if(row_index == position){
+            holder.itemView.findViewById(R.id.card).setBackgroundColor(Color.GREEN);
+        }else{
+            if(position % 2 == 1)
+            {
+                holder.itemView.findViewById(R.id.card).setBackgroundColor(Color.WHITE);
+            }
+            else
+            {
+                holder.itemView.findViewById(R.id.card).setBackgroundColor(Color.LTGRAY);
+            }
         }
     }
 

@@ -11,7 +11,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.InputType;
 import android.widget.Button;
@@ -24,7 +23,8 @@ import java.util.ArrayList;
 public class TeacherActivity extends AppCompatActivity implements BankAdapter.OnNoteListener {
 
     RecyclerView recyclerView;
-    boolean deleteMode = false;
+
+    int pressedNode = -1;
 
     ArrayList<QuestionBank> questionBanks = new ArrayList<>();
 
@@ -51,35 +51,28 @@ public class TeacherActivity extends AppCompatActivity implements BankAdapter.On
         Button createBank = findViewById(R.id.createBankButton);
         createBank.setOnClickListener(v -> {
             createBankInput();
-            deleteMode = false;
-            changeDeleteMode();
             myAdapter.notifyDataSetChanged();
         });
 
         delete = findViewById(R.id.delete);
         delete.setOnClickListener(v -> {
-            deleteMode = !deleteMode;
-            changeDeleteMode();
+            if(pressedNode >= 0 ){
+                if (!simpleSwitch.isChecked()) deleteBank(pressedNode);
+                else removeQuestion(pressedNode);
+            }else{
+                Toast toast = Toast.makeText(this, "Choose item to delete", Toast.LENGTH_SHORT);
+                toast.show();
+            }
         });
 
         Button addQuestion = findViewById(R.id.addQuestion);
         addQuestion.setOnClickListener(v -> {
             addQuestionInput();
-            deleteMode = false;
-            changeDeleteMode();
             questionAdapter.notifyDataSetChanged();
         });
 
         simpleSwitch = findViewById(R.id.viewSwitch);
         simpleSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> changeList(isChecked));
-    }
-
-    void changeDeleteMode(){
-        if (deleteMode) {
-            delete.setBackgroundColor(Color.GRAY);
-        }else{
-            delete.setBackgroundColor(Color.WHITE);
-        }
     }
 
     void changeList(boolean isChecked){
@@ -94,6 +87,9 @@ public class TeacherActivity extends AppCompatActivity implements BankAdapter.On
             recyclerView.setAdapter(myAdapter);
             myAdapter.notifyDataSetChanged();
         }
+        myAdapter.row_index = -1;
+        questionAdapter.row_index = -1;
+        pressedNode = -1;
     }
 
 
@@ -126,83 +122,63 @@ public class TeacherActivity extends AppCompatActivity implements BankAdapter.On
             toast.show();
         }
         listBanks();
+        recyclerView.setAdapter(myAdapter);
+        myAdapter.notifyDataSetChanged();
+        simpleSwitch.setChecked(false);
     }
 
     // FR2
     void addQuestionInput(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Enter your Question");
+        if(pressedNode >= 0 && !simpleSwitch.isChecked()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            listBanks();
+            builder.setTitle("Enter question for " + questionBanks.get(pressedNode).mName);
 
-        final EditText input = new EditText(this);
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        builder.setView(input);
+            final EditText input = new EditText(this);
+            input.setInputType(InputType.TYPE_CLASS_TEXT);
+            builder.setView(input);
 
-        builder.setPositiveButton("Continue", (dialog, which) -> {
-                    AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
-                    builder2.setTitle("Type name of your Question Bank");
+            builder.setPositiveButton("Continue", (dialog, which) -> {
+                addQuestion(input.getText().toString());
 
-                    final EditText input2 = new EditText(this);
-                    input2.setInputType(InputType.TYPE_CLASS_NUMBER);
-                    builder2.setView(input2);
+            });
+            builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
 
-                    builder2.setPositiveButton("Continue", (dialog2, which2) -> {
-                        if(addQuestionToBank(input2.getText().toString()))
-                        addQuestion(input.getText().toString(), input2.getText().toString());
-                    });
-
-            builder2.setNegativeButton("Cancel", (dialog2, which2) -> dialog.cancel());
-
-            builder2.show();
-                });
-        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
-
-        builder.show();
+            builder.show();
+        }else if(simpleSwitch.isChecked()){
+            Toast toast = Toast.makeText(this, "Change list and choose bank to add question to!", Toast.LENGTH_SHORT);
+            toast.show();
+        } else{
+            Toast toast = Toast.makeText(this, "Choose bank to add question to!", Toast.LENGTH_SHORT);
+            toast.show();
+        }
     }
 
-    void addQuestion(String questionInput, String idInput){
+    void addQuestion(String questionInput){
         try {
             SQLiteDatabase db = databaseHelper.getWritableDatabase();
             ContentValues questionValues = new ContentValues();
+            String bankId = questionBanks.get(pressedNode).mId;
 
             questionValues.put("QUESTION", questionInput);
-            questionValues.put("BANKID", idInput);
+            questionValues.put("BANKID", bankId);
             db.insert("QUESTIONS", null, questionValues);
-            db.close();
+
+            ContentValues bankValues = new ContentValues();
+            int value = Integer.parseInt(questionBanks.get(pressedNode).mData);
+            value++;
+            bankValues.put("NUMBEROFQUESTIONS", String.valueOf(value));
+            db.update("QUESTIONBANKS", bankValues, "_id = " + bankId, null);
         } catch(SQLiteException e){
             Toast toast = Toast.makeText(this, "Database unavailable", Toast.LENGTH_SHORT);
             toast.show();
         }
         listQuestions();
+        recyclerView.setAdapter(questionAdapter);
+        questionAdapter.notifyDataSetChanged();
+        simpleSwitch.setChecked(true);
     }
 
-    boolean addQuestionToBank(String id){
-        try {
-            SQLiteDatabase db = databaseHelper.getWritableDatabase();
-            ContentValues noOfQuestions = new ContentValues();
-
-            Cursor cursor = db.query("QUESTIONBANKS", new String[]{"_id", "NUMBEROFQUESTIONS"},
-                    null, null, null, null, null, null);
-            int number;
-            if(cursor.moveToFirst()){
-                do {
-                    number = cursor.getInt(0);
-                    if(number == Integer.parseInt(id)){
-                        number = cursor.getInt(1);
-                        noOfQuestions.put("NUMBEROFQUESTIONS", number + 1);
-                        db.update("QUESTIONBANKS", noOfQuestions, "_id = ?", new String[] {id});
-                        return true;
-                    }
-                }while(cursor.moveToNext());
-            }
-            cursor.close();
-            db.close();
-            return false;
-        } catch(SQLiteException e){
-            Toast toast = Toast.makeText(this, "Database unavailable", Toast.LENGTH_SHORT);
-            toast.show();
-        }
-        return false;
-    }
     // FR3
     void listQuestions(){
         try {
@@ -230,12 +206,26 @@ public class TeacherActivity extends AppCompatActivity implements BankAdapter.On
             SQLiteDatabase db = databaseHelper.getWritableDatabase();
             String questionName = questionBanks.get(id).mName;
             String questionId = questionBanks.get(id).mId;
+            String questionBankId = questionBanks.get(id).mData;
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Are you sure you want to delete " + questionName);
 
             builder.setPositiveButton("Yes", (dialog, which) -> {
                 db.delete("QUESTIONS", "_id = " + questionId, null);
+
+                Cursor cursor = db.query("QUESTIONBANKS", new String[]{"_id", "NUMBEROFQUESTIONS"},
+                        null, null, null, null, null);
+                cursor.moveToFirst();
+                    while(cursor.getInt(0) != Integer.parseInt(questionBankId)){
+                        cursor.moveToNext();
+                    }
+                ContentValues bankValues = new ContentValues();
+                int value = Integer.parseInt(cursor.getString(1));
+                value--;
+                bankValues.put("NUMBEROFQUESTIONS", String.valueOf(value));
+                db.update("QUESTIONBANKS", bankValues, "_id = " + questionBankId, null);
+                cursor.close();
                 db.close();
                 listQuestions();
                 questionAdapter.notifyDataSetChanged();
@@ -285,6 +275,7 @@ public class TeacherActivity extends AppCompatActivity implements BankAdapter.On
 
             builder.setPositiveButton("Yes", (dialog, which) -> {
                 db.delete("QUESTIONBANKS", "_id = " + bankId, null);
+                db.delete("QUESTIONS", "BANKID = " + bankId, null);
                 db.close();
                 listBanks();
                 myAdapter.notifyDataSetChanged();
@@ -303,14 +294,11 @@ public class TeacherActivity extends AppCompatActivity implements BankAdapter.On
 
     @Override
     public void onNoteClick(int position) {
-        if(deleteMode) {
-            if (simpleSwitch.isChecked()) {
-                removeQuestion(position);
-            } else {
-                deleteBank(position);
-            }
+        System.out.println(position);
+        if(position == pressedNode){
+            pressedNode = -1;
         }else{
-
+            pressedNode = position;
         }
     }
 }

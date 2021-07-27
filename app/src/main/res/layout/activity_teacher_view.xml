@@ -42,7 +42,7 @@
             android:layout_height="80dp"
             android:layout_margin="5dp"
             android:layout_weight="1"
-            android:text="@string/deleteMode"
+            android:text="@string/delete"
             android:textSize="12sp" />
 
     </LinearLayout>
