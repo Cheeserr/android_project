@@ -13,28 +13,37 @@ import java.util.ArrayList;
 
 public class BankAdapter extends RecyclerView.Adapter<BankAdapter.MyViewHolder> {
 
-    ArrayList<String> data1;
-    ArrayList<Integer> data2;
-    ArrayList<Integer> data3;
+    ArrayList<QuestionBank> mQuestionBanks;
     Context context;
 
-    public BankAdapter(Context ct, ArrayList<String> s1, ArrayList<Integer> s2, ArrayList<Integer> s3){
+    private final OnNoteListener mOnNoteListener;
+
+
+    public BankAdapter(Context ct, ArrayList<QuestionBank> questionBanks, OnNoteListener onNoteListener){
         context = ct;
-        data1 = s1;
-        data2 = s2;
-        data3 = s3;
+        mQuestionBanks = questionBanks;
+        this.mOnNoteListener = onNoteListener;
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder{
+    public static class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-        TextView myText1, myText2, myText3;
+        TextView idText, nameText, extraText;
+        OnNoteListener onNoteListener;
 
 
-        public MyViewHolder(@NonNull View itemView) {
+        public MyViewHolder(@NonNull View itemView, OnNoteListener onNoteListener) {
             super(itemView);
-            myText1 = itemView.findViewById(R.id.id);
-            myText2 = itemView.findViewById(R.id.questionBank);
-            myText3 = itemView.findViewById(R.id.noQuestions);
+            idText = itemView.findViewById(R.id.id);
+            nameText = itemView.findViewById(R.id.questionBank);
+            extraText = itemView.findViewById(R.id.noQuestions);
+            this.onNoteListener = onNoteListener;
+
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            onNoteListener.onNoteClick(getAdapterPosition());
         }
     }
 
@@ -43,19 +52,23 @@ public class BankAdapter extends RecyclerView.Adapter<BankAdapter.MyViewHolder> 
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.my_row, parent, false);
-        return new MyViewHolder(view);
+        return new MyViewHolder(view, mOnNoteListener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull BankAdapter.MyViewHolder holder, int position) {
-        holder.myText1.setText(String.valueOf(data3.get(position)));
-        holder.myText2.setText(data1.get(position));
-        holder.myText3.setText(String.valueOf(data2.get(position)));
+        holder.idText.setText(mQuestionBanks.get(position).mId);
+        holder.nameText.setText(mQuestionBanks.get(position).mName);
+        holder.extraText.setText(mQuestionBanks.get(position).mData);
     }
 
     @Override
     public int getItemCount() {
-        return data1.size();
+        return mQuestionBanks.size();
+    }
+
+    public interface OnNoteListener{
+        void onNoteClick(int position);
     }
 
 }

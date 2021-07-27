@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.InputType;
 import android.widget.Button;
@@ -20,12 +21,19 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class TeacherActivity extends AppCompatActivity {
+public class TeacherActivity extends AppCompatActivity implements BankAdapter.OnNoteListener {
 
     RecyclerView recyclerView;
-    ArrayList<String> data1 = new ArrayList<>();
-    ArrayList<Integer> data2 = new ArrayList<>();
-    ArrayList<Integer> data3 = new ArrayList<>();
+    boolean deleteMode = false;
+
+    ArrayList<QuestionBank> questionBanks = new ArrayList<>();
+
+    BankAdapter questionAdapter = new BankAdapter(this, questionBanks, this);
+    BankAdapter myAdapter = new BankAdapter(this, questionBanks, this);
+
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
+    Switch simpleSwitch;
+    Button delete;
 
     SQLiteOpenHelper databaseHelper = new DatabaseHelper(this);
 
@@ -37,51 +45,55 @@ public class TeacherActivity extends AppCompatActivity {
         listBanks();
 
         recyclerView = findViewById(R.id.recyclerView);
-        BankAdapter bankAdapter = new BankAdapter(this, data1, data2, data3);
-        BankAdapter questionAdapter = new BankAdapter(this, data1, data2, data3);
-        recyclerView.setAdapter(bankAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(myAdapter);
 
         Button createBank = findViewById(R.id.createBankButton);
         createBank.setOnClickListener(v -> {
             createBankInput();
-            bankAdapter.notifyDataSetChanged();
+            deleteMode = false;
+            changeDeleteMode();
+            myAdapter.notifyDataSetChanged();
         });
 
-
-        Button deleteBank = findViewById(R.id.deleteBank);
-        deleteBank.setOnClickListener(v -> {
-            deleteBankInput();
-            bankAdapter.notifyDataSetChanged();
+        delete = findViewById(R.id.delete);
+        delete.setOnClickListener(v -> {
+            deleteMode = !deleteMode;
+            changeDeleteMode();
         });
 
         Button addQuestion = findViewById(R.id.addQuestion);
         addQuestion.setOnClickListener(v -> {
             addQuestionInput();
+            deleteMode = false;
+            changeDeleteMode();
             questionAdapter.notifyDataSetChanged();
         });
 
-        Button removeQuestion = findViewById(R.id.removeQuestion);
-        removeQuestion.setOnClickListener(v -> {
-            removeQuestionInput();
+        simpleSwitch = findViewById(R.id.viewSwitch);
+        simpleSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> changeList(isChecked));
+    }
+
+    void changeDeleteMode(){
+        if (deleteMode) {
+            delete.setBackgroundColor(Color.GREEN);
+        }else{
+            delete.setBackgroundColor(Color.WHITE);
+        }
+    }
+
+    void changeList(boolean isChecked){
+        if(isChecked) {
+            simpleSwitch.setText(R.string.questionListViewText);
+            listQuestions();
+            recyclerView.setAdapter(questionAdapter);
             questionAdapter.notifyDataSetChanged();
-        });
-
-
-        @SuppressLint("UseSwitchCompatOrMaterialCode") Switch simpleSwitch = findViewById(R.id.viewSwitch);
-        simpleSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if(isChecked){
-                simpleSwitch.setText(R.string.questionListViewText);
-                listQuestions();
-                recyclerView.setAdapter(questionAdapter);
-                questionAdapter.notifyDataSetChanged();
-            }else{
-                simpleSwitch.setText(R.string.listViewText);
-                listBanks();
-                recyclerView.setAdapter(bankAdapter);
-                bankAdapter.notifyDataSetChanged();
-            }
-        });
+        }else{
+            simpleSwitch.setText(R.string.listViewText);
+            listBanks();
+            recyclerView.setAdapter(myAdapter);
+            myAdapter.notifyDataSetChanged();
+        }
     }
 
 
@@ -194,21 +206,15 @@ public class TeacherActivity extends AppCompatActivity {
     // FR3
     void listQuestions(){
         try {
-            data1.clear();
-            data2.clear();
-            data3.clear();
+            questionBanks.clear();
             SQLiteDatabase db = databaseHelper.getReadableDatabase();
-            Cursor cursor = db.query("QUESTIONS", new String[] {"_id","BANKID","QUESTION"},
+            Cursor cursor = db.query("QUESTIONS", new String[] {"_id","QUESTION","BANKID"},
                     null, null, null, null, null);
             if(cursor.moveToFirst()){
-                data1.add(cursor.getString(2));
-                data2.add(cursor.getInt(1));
-                data3.add(cursor.getInt(0));
+                questionBanks.add(new QuestionBank(cursor.getString(0), cursor.getString(1), cursor.getString(2)));
             }
             while(cursor.moveToNext()){
-                data1.add(cursor.getString(2));
-                data2.add(cursor.getInt(1));
-                data3.add(cursor.getInt(0));
+                questionBanks.add(new QuestionBank(cursor.getString(0), cursor.getString(1), cursor.getString(2)));
             }
             cursor.close();
             db.close();
@@ -219,46 +225,45 @@ public class TeacherActivity extends AppCompatActivity {
 
     }
     // FR3
-    void removeQuestionInput(){
+    void removeQuestion(int id){
+        try {
+            SQLiteDatabase db = databaseHelper.getWritableDatabase();
+            String questionName = questionBanks.get(id).mName;
+            String questionId = questionBanks.get(id).mId;
+
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Enter Question ID");
+            builder.setTitle("Are you sure you want to delete " + questionName);
 
-            final EditText input = new EditText(this);
-            input.setInputType(InputType.TYPE_CLASS_NUMBER);
-            builder.setView(input);
-
-            builder.setPositiveButton("Continue", (dialog, which) -> removeQuestion(input.getText().toString()));
-            builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+            builder.setPositiveButton("Yes", (dialog, which) -> {
+                db.delete("QUESTIONS", "_id = " + questionId, null);
+                db.close();
+                listQuestions();
+                questionAdapter.notifyDataSetChanged();
+            });
+            builder.setNegativeButton("No", (dialog, which) -> {
+                db.close();
+                dialog.cancel();
+            });
 
             builder.show();
-    }
-
-    void removeQuestion(String id){
-
-    }
-
-    void removeQuestionFromBank(String id){
-
+        } catch(SQLiteException e){
+            Toast toast = Toast.makeText(this, "Database unavailable", Toast.LENGTH_SHORT);
+            toast.show();
+        }
     }
 
     // FR4
     void listBanks(){
         try {
-            data1.clear();
-            data2.clear();
-            data3.clear();
+            questionBanks.clear();
         SQLiteDatabase db = databaseHelper.getReadableDatabase();
         Cursor cursor = db.query("QUESTIONBANKS", new String[] {"_id", "NAME","NUMBEROFQUESTIONS"},
                 null, null, null, null, null);
         if(cursor.moveToFirst()){
-            data1.add(cursor.getString(1));
-            data2.add(cursor.getInt(2));
-            data3.add(cursor.getInt(0));
+            questionBanks.add(new QuestionBank(cursor.getString(0), cursor.getString(1), cursor.getString(2)));
         }
         while(cursor.moveToNext()){
-            data1.add(cursor.getString(1));
-            data2.add(cursor.getInt(2));
-            data3.add(cursor.getInt(0));
+            questionBanks.add(new QuestionBank(cursor.getString(0), cursor.getString(1), cursor.getString(2)));
         }
         cursor.close();
         db.close();
@@ -269,30 +274,43 @@ public class TeacherActivity extends AppCompatActivity {
 
     }
     // FR5
-    void deleteBankInput(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Type id of your Question Bank");
-
-        final EditText input = new EditText(this);
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        builder.setView(input);
-
-        builder.setPositiveButton("Continue", (dialog, which) -> deleteBank(input.getText().toString()));
-        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
-
-
-        builder.show();
-    }
-
-    void deleteBank(String id) {
+    void deleteBank(int id) {
         try {
             SQLiteDatabase db = databaseHelper.getWritableDatabase();
-            db.delete("QUESTIONBANKS", "_id = " + id, null);
-            db.close();
+            String bankName = questionBanks.get(id).mName;
+            String bankId = questionBanks.get(id).mId;
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Are you sure you want to delete " + bankName);
+
+            builder.setPositiveButton("Yes", (dialog, which) -> {
+                db.delete("QUESTIONBANKS", "_id = " + bankId, null);
+                db.close();
+                listBanks();
+                myAdapter.notifyDataSetChanged();
+            });
+            builder.setNegativeButton("No", (dialog, which) -> {
+                db.close();
+                dialog.cancel();
+            });
+
+            builder.show();
         } catch(SQLiteException e){
             Toast toast = Toast.makeText(this, "Database unavailable", Toast.LENGTH_SHORT);
             toast.show();
         }
-        listBanks();
+    }
+
+    @Override
+    public void onNoteClick(int position) {
+        if(deleteMode) {
+            if (simpleSwitch.isChecked()) {
+                removeQuestion(position);
+            } else {
+                deleteBank(position);
+            }
+        }else{
+
+        }
     }
 }

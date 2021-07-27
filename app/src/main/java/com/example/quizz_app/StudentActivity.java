@@ -17,12 +17,10 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class StudentActivity extends AppCompatActivity {
+public class StudentActivity extends AppCompatActivity implements BankAdapter.OnNoteListener {
 
     RecyclerView recyclerView;
-    ArrayList<String> data1 = new ArrayList<>();
-    ArrayList<Integer> data2 = new ArrayList<>();
-    ArrayList<Integer> data3 = new ArrayList<>();
+    ArrayList<QuestionBank> questionBanks = new ArrayList<>();
 
     SQLiteOpenHelper databaseHelper = new DatabaseHelper(this);
 
@@ -35,8 +33,8 @@ public class StudentActivity extends AppCompatActivity {
         listBanks();
 
         recyclerView = findViewById(R.id.recyclerView);
-        BankAdapter bankAdapter = new BankAdapter(this, data1, data2, data3);
-        recyclerView.setAdapter(bankAdapter);
+        BankAdapter myAdapter = new BankAdapter(this, questionBanks, this);
+        recyclerView.setAdapter(myAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         Button takeAQuiz = findViewById(R.id.takeAQuiz);
@@ -45,21 +43,15 @@ public class StudentActivity extends AppCompatActivity {
 
     void listBanks(){
         try {
-            data1.clear();
-            data2.clear();
-            data3.clear();
+            questionBanks.clear();
             SQLiteDatabase db = databaseHelper.getReadableDatabase();
             Cursor cursor = db.query("QUESTIONBANKS", new String[] {"_id", "NAME","NUMBEROFQUESTIONS"},
                     null, null, null, null, null);
             if(cursor.moveToFirst()){
-                data1.add(cursor.getString(1));
-                data2.add(cursor.getInt(2));
-                data3.add(cursor.getInt(0));
+                questionBanks.add(new QuestionBank(cursor.getString(0), cursor.getString(1), cursor.getString(2)));
             }
             while(cursor.moveToNext()){
-                data1.add(cursor.getString(1));
-                data2.add(cursor.getInt(2));
-                data3.add(cursor.getInt(0));
+                questionBanks.add(new QuestionBank(cursor.getString(0), cursor.getString(1), cursor.getString(2)));
             }
             cursor.close();
             db.close();
@@ -86,5 +78,10 @@ public class StudentActivity extends AppCompatActivity {
 
     void quiz(int id){
         // TODO
+    }
+
+    @Override
+    public void onNoteClick(int position) {
+        System.out.println(position);
     }
 }
