@@ -44,20 +44,26 @@ public class TeacherActivity extends AppCompatActivity {
 
         Button createBank = findViewById(R.id.createBankButton);
         createBank.setOnClickListener(v -> {
-            inputDialogBank();
+            createBankInput();
             bankAdapter.notifyDataSetChanged();
         });
 
 
         Button deleteBank = findViewById(R.id.deleteBank);
         deleteBank.setOnClickListener(v -> {
-            deleteDialog();
+            deleteBankInput();
             bankAdapter.notifyDataSetChanged();
         });
 
         Button addQuestion = findViewById(R.id.addQuestion);
         addQuestion.setOnClickListener(v -> {
-            inputDialogQuestion();
+            addQuestionInput();
+            questionAdapter.notifyDataSetChanged();
+        });
+
+        Button removeQuestion = findViewById(R.id.removeQuestion);
+        removeQuestion.setOnClickListener(v -> {
+            removeQuestionInput();
             questionAdapter.notifyDataSetChanged();
         });
 
@@ -80,7 +86,7 @@ public class TeacherActivity extends AppCompatActivity {
 
 
     // FR1
-    void inputDialogBank(){
+    void createBankInput(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Type name of your Question Bank");
 
@@ -111,7 +117,7 @@ public class TeacherActivity extends AppCompatActivity {
     }
 
     // FR2
-    void inputDialogQuestion(){
+    void addQuestionInput(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Enter your Question");
 
@@ -213,9 +219,28 @@ public class TeacherActivity extends AppCompatActivity {
 
     }
     // FR3
-    void removeQuestion(){
+    void removeQuestionInput(){
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Enter Question ID");
+
+            final EditText input = new EditText(this);
+            input.setInputType(InputType.TYPE_CLASS_NUMBER);
+            builder.setView(input);
+
+            builder.setPositiveButton("Continue", (dialog, which) -> removeQuestion(input.getText().toString()));
+            builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+
+            builder.show();
+    }
+
+    void removeQuestion(String id){
 
     }
+
+    void removeQuestionFromBank(String id){
+
+    }
+
     // FR4
     void listBanks(){
         try {
@@ -244,7 +269,7 @@ public class TeacherActivity extends AppCompatActivity {
 
     }
     // FR5
-    void deleteDialog(){
+    void deleteBankInput(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Type id of your Question Bank");
 
@@ -252,14 +277,14 @@ public class TeacherActivity extends AppCompatActivity {
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         builder.setView(input);
 
-        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
         builder.setPositiveButton("Continue", (dialog, which) -> deleteBank(input.getText().toString()));
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+
 
         builder.show();
     }
 
     void deleteBank(String id) {
-
         try {
             SQLiteDatabase db = databaseHelper.getWritableDatabase();
             db.delete("QUESTIONBANKS", "_id = " + id, null);

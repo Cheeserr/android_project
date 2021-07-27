@@ -29,7 +29,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues bankValues = new ContentValues();
 
         bankValues.put("NAME", "Biology");
-        bankValues.put("NUMBEROFQUESTIONS", 5);
+        bankValues.put("NUMBEROFQUESTIONS", 1);
         db.insert("QUESTIONBANKS", null, bankValues);
 
         ContentValues questionValues = new ContentValues();

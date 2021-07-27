@@ -58,5 +58,4 @@ public class BankAdapter extends RecyclerView.Adapter<BankAdapter.MyViewHolder> 
         return data1.size();
     }
 
-
 }
