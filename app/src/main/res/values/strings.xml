@@ -6,4 +6,8 @@
     <string name="listViewText">Banks</string>
     <string name="questionListViewText">Questions</string>
     <string name="takeAQuiz">Take a Quiz</string>
+    <string name="screenID">ID</string>
+    <string name="sceenName">Name</string>
+    <string name="noOfQuestions">No of Questions</string>
+    <string name="screenBankID">Bank ID</string>
 </resources>

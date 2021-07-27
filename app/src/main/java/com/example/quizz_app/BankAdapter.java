@@ -46,7 +46,8 @@ public class BankAdapter extends RecyclerView.Adapter<BankAdapter.MyViewHolder> 
         @Override
         public void onClick(View itemView) {
             onNoteListener.onNoteClick(getAdapterPosition());
-            row_index = getAdapterPosition();
+            if(row_index != getAdapterPosition()) row_index = getAdapterPosition();
+            else row_index = -1;
             notifyDataSetChanged();
         }
     }

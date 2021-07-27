@@ -24,6 +24,8 @@ public class StudentActivity extends AppCompatActivity implements BankAdapter.On
 
     SQLiteOpenHelper databaseHelper = new DatabaseHelper(this);
 
+    int pressedNode = -1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +40,7 @@ public class StudentActivity extends AppCompatActivity implements BankAdapter.On
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         Button takeAQuiz = findViewById(R.id.takeAQuiz);
-        takeAQuiz.setOnClickListener(v -> chooseQuiz());
+        takeAQuiz.setOnClickListener(v -> chooseQuiz(pressedNode));
     }
 
     void listBanks(){
@@ -62,26 +64,35 @@ public class StudentActivity extends AppCompatActivity implements BankAdapter.On
 
     }
 
-    void chooseQuiz(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Choose Id of Question Bank");
+    void chooseQuiz(int id){
+        if(id >= 0) {
+            String bankName = questionBanks.get(id).mName;
+            String bankID = questionBanks.get(id).mId;
 
-        final EditText input = new EditText(this);
-        input.setInputType(InputType.TYPE_CLASS_NUMBER);
-        builder.setView(input);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Do you want to take Quiz in " + bankName);
 
-        builder.setPositiveButton("Continue", (dialog, which) -> quiz(Integer.parseInt(input.getText().toString())));
-        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+            builder.setPositiveButton("Continue", (dialog, which) -> quiz(bankID));
+            builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
 
-        builder.show();
+            builder.show();
+        }else{
+            Toast toast = Toast.makeText(this, "Choose Bank to take quizz in!", Toast.LENGTH_SHORT);
+            toast.show();
+        }
     }
 
-    void quiz(int id){
+    void quiz(String id){
         // TODO
     }
 
     @Override
     public void onNoteClick(int position) {
-        System.out.println(position);
+        if(position == pressedNode){
+            pressedNode = -1;
+        }else{
+            pressedNode = position;
+        }
+        System.out.println(pressedNode);
     }
 }

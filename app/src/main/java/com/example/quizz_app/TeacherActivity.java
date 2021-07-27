@@ -16,6 +16,7 @@ import android.text.InputType;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ public class TeacherActivity extends AppCompatActivity implements BankAdapter.On
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     Switch simpleSwitch;
     Button delete;
+    TextView label;
 
     SQLiteOpenHelper databaseHelper = new DatabaseHelper(this);
 
@@ -47,6 +49,8 @@ public class TeacherActivity extends AppCompatActivity implements BankAdapter.On
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(myAdapter);
+
+        label = findViewById(R.id.extraLabel);
 
         Button createBank = findViewById(R.id.createBankButton);
         createBank.setOnClickListener(v -> {
@@ -77,18 +81,19 @@ public class TeacherActivity extends AppCompatActivity implements BankAdapter.On
 
     void changeList(boolean isChecked){
         if(isChecked) {
+            label.setText(R.string.screenBankID);
             simpleSwitch.setText(R.string.questionListViewText);
             listQuestions();
             recyclerView.setAdapter(questionAdapter);
             questionAdapter.notifyDataSetChanged();
         }else{
+            label.setText(R.string.noOfQuestions);
             simpleSwitch.setText(R.string.listViewText);
             listBanks();
             recyclerView.setAdapter(myAdapter);
             myAdapter.notifyDataSetChanged();
         }
-        myAdapter.row_index = -1;
-        questionAdapter.row_index = -1;
+        BankAdapter.row_index = -1;
         pressedNode = -1;
     }
 
@@ -138,10 +143,7 @@ public class TeacherActivity extends AppCompatActivity implements BankAdapter.On
             input.setInputType(InputType.TYPE_CLASS_TEXT);
             builder.setView(input);
 
-            builder.setPositiveButton("Continue", (dialog, which) -> {
-                addQuestion(input.getText().toString());
-
-            });
+            builder.setPositiveButton("Continue", (dialog, which) -> addQuestion(input.getText().toString()));
             builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
 
             builder.show();
@@ -294,11 +296,11 @@ public class TeacherActivity extends AppCompatActivity implements BankAdapter.On
 
     @Override
     public void onNoteClick(int position) {
-        System.out.println(position);
         if(position == pressedNode){
             pressedNode = -1;
         }else{
             pressedNode = position;
         }
+        System.out.println(pressedNode);
     }
 }

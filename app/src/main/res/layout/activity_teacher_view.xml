@@ -58,29 +58,33 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.05"
+        android:layout_weight="0.09"
         android:orientation="horizontal">
 
         <TextView
             android:id="@+id/id_label"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="0.15"
-            android:text="ID" />
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="10dp"
+            android:text="@string/screenID" />
 
         <TextView
             android:id="@+id/id_label2"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="0.60"
-            android:text="Name" />
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="10dp"
+            android:text="@string/sceenName" />
 
         <TextView
-            android:id="@+id/id_label3"
+            android:id="@+id/extraLabel"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.1"
-            android:text="Extra" />
+            android:layout_height="match_parent"
+            android:layout_weight="0.2"
+            android:text="@string/noOfQuestions" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
