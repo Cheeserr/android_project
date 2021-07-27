@@ -1,6 +1,7 @@
 package com.example.quizz_app;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,6 +61,15 @@ public class BankAdapter extends RecyclerView.Adapter<BankAdapter.MyViewHolder> 
         holder.idText.setText(mQuestionBanks.get(position).mId);
         holder.nameText.setText(mQuestionBanks.get(position).mName);
         holder.extraText.setText(mQuestionBanks.get(position).mData);
+
+        if(position % 2 == 1)
+        {
+            holder.itemView.findViewById(R.id.card).setBackgroundColor(Color.WHITE);
+        }
+        else
+        {
+            holder.itemView.findViewById(R.id.card).setBackgroundColor(Color.LTGRAY);
+        }
     }
 
     @Override

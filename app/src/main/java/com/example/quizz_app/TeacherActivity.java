@@ -76,7 +76,7 @@ public class TeacherActivity extends AppCompatActivity implements BankAdapter.On
 
     void changeDeleteMode(){
         if (deleteMode) {
-            delete.setBackgroundColor(Color.GREEN);
+            delete.setBackgroundColor(Color.GRAY);
         }else{
             delete.setBackgroundColor(Color.WHITE);
         }

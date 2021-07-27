@@ -26,16 +26,6 @@
             tools:ignore="NestedWeights" />
 
         <Button
-            android:id="@+id/deleteBank"
-            android:layout_width="0dp"
-            android:layout_height="80dp"
-            android:layout_weight="1"
-            android:layout_margin="5dp"
-            android:text="@string/deleteBankButton"
-            android:textSize="12sp"
-            style="?android:attr/buttonBarButtonStyle" />
-
-        <Button
             android:id="@+id/addQuestion"
             android:layout_width="0dp"
             android:layout_height="80dp"
@@ -46,14 +36,14 @@
             style="?android:attr/buttonBarButtonStyle" />
 
         <Button
-            android:id="@+id/removeQuestion"
+            android:id="@+id/delete"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="80dp"
-            android:layout_weight="1"
             android:layout_margin="5dp"
-            android:text="@string/removeQuestion"
-            android:textSize="12sp"
-            style="?android:attr/buttonBarButtonStyle" />
+            android:layout_weight="1"
+            android:text="@string/deleteMode"
+            android:textSize="12sp" />
 
     </LinearLayout>
 
@@ -97,6 +87,10 @@
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:clickable="true"
+        android:focusable="true"
+        />
+
 
 </LinearLayout>
