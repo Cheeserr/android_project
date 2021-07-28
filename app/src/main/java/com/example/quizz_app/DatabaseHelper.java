@@ -24,7 +24,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE QUESTIONS ("
                 + "_id INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + "BANKID INTEGER, "
-                + "QUESTION TEXT);");
+                + "QUESTION TEXT," +
+                "A1 TEXT, " +
+                "A2 TEXT, " +
+                "A3 TEXT, " +
+                "A4 TEXT, " +
+                "A5 TEXT, " +
+                "A6 TEXT, " +
+                "A7 TEXT, " +
+                "A8 TEXT, " +
+                "A9 TEXT, " +
+                "A10 TEXT);");
+
 
         ContentValues bankValues = new ContentValues();
 

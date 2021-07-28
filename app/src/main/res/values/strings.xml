@@ -10,4 +10,5 @@
     <string name="sceenName">Name</string>
     <string name="noOfQuestions">No of Questions</string>
     <string name="screenBankID">Bank ID</string>
+    <string name="answerText">Answer</string>
 </resources>

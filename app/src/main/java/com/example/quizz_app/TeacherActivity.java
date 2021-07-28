@@ -143,7 +143,32 @@ public class TeacherActivity extends AppCompatActivity implements BankAdapter.On
             input.setInputType(InputType.TYPE_CLASS_TEXT);
             builder.setView(input);
 
-            builder.setPositiveButton("Continue", (dialog, which) -> addQuestion(input.getText().toString()));
+            builder.setPositiveButton("Continue", (dialog, which) -> {
+                AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
+                builder2.setTitle("Enter answers for " + input.getText().toString());
+                builder2.setView(R.layout.my_dialog);
+                EditText[] answers = {findViewById(R.id.answer1), findViewById(R.id.answer2), findViewById(R.id.answer3),
+                findViewById(R.id.answer4), findViewById(R.id.answer5), findViewById(R.id.answer6), findViewById(R.id.answer7),
+                findViewById(R.id.answer8), findViewById(R.id.answer9), findViewById(R.id.answer10)};
+
+                builder2.setPositiveButton("Continue", ((dialog1, which1) -> {
+                    String[] answerText = new String[10];
+
+                    for(int i = 0; i < 10; i++){
+                        answerText[i] = answers[i].getText().toString();
+                    }
+                    if(!answerText[0].isEmpty())
+                    addQuestion(input.getText().toString(), answerText);
+                    else {
+                        Toast toast = Toast.makeText(this, "Enter correct answer!", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
+                }));
+                builder2.setNegativeButton("Cancel", (dialog1, which1) -> dialog1.cancel());
+
+                builder2.show();
+
+            });
             builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
 
             builder.show();
@@ -156,7 +181,7 @@ public class TeacherActivity extends AppCompatActivity implements BankAdapter.On
         }
     }
 
-    void addQuestion(String questionInput){
+    void addQuestion(String questionInput, String[] answers){
         try {
             SQLiteDatabase db = databaseHelper.getWritableDatabase();
             ContentValues questionValues = new ContentValues();
@@ -164,6 +189,9 @@ public class TeacherActivity extends AppCompatActivity implements BankAdapter.On
 
             questionValues.put("QUESTION", questionInput);
             questionValues.put("BANKID", bankId);
+            for(int i = 0; i < 10; i++){
+                questionValues.put("A" + i, answers[i]);
+            }
             db.insert("QUESTIONS", null, questionValues);
 
             ContentValues bankValues = new ContentValues();
