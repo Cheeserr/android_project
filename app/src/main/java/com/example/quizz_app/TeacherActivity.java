@@ -13,11 +13,14 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.text.InputType;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
@@ -34,8 +37,8 @@ public class TeacherActivity extends AppCompatActivity implements BankAdapter.On
 
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     Switch simpleSwitch;
-    Button delete;
     TextView label;
+    Boolean goInto = false;
 
     SQLiteOpenHelper databaseHelper = new DatabaseHelper(this);
 
@@ -52,16 +55,13 @@ public class TeacherActivity extends AppCompatActivity implements BankAdapter.On
 
         label = findViewById(R.id.extraLabel);
 
-        Button createBank = findViewById(R.id.createBankButton);
-        createBank.setOnClickListener(v -> {
-            createBankInput();
-            myAdapter.notifyDataSetChanged();
-        });
+        simpleSwitch = findViewById(R.id.viewSwitch);
 
-        delete = findViewById(R.id.delete);
-        delete.setOnClickListener(v -> {
+
+        FloatingActionButton deleteButton = findViewById(R.id.fabDelete);
+        deleteButton.setOnClickListener(v -> {
             if(pressedNode >= 0 ){
-                if (!simpleSwitch.isChecked()) deleteBank(pressedNode);
+                if (!goInto) deleteBank(pressedNode);
                 else removeQuestion(pressedNode);
             }else{
                 Toast toast = Toast.makeText(this, "Choose item to delete", Toast.LENGTH_SHORT);
@@ -69,18 +69,27 @@ public class TeacherActivity extends AppCompatActivity implements BankAdapter.On
             }
         });
 
-        Button addQuestion = findViewById(R.id.addQuestion);
-        addQuestion.setOnClickListener(v -> {
+        FloatingActionButton addButton = findViewById(R.id.fabAdd);
+        addButton.setOnClickListener(v -> {
             addQuestionInput();
             questionAdapter.notifyDataSetChanged();
         });
 
-        simpleSwitch = findViewById(R.id.viewSwitch);
-        simpleSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> changeList(isChecked));
+        FloatingActionButton addBankButton = findViewById(R.id.fabAddBank);
+        addBankButton.setOnClickListener(v -> {
+            createBankInput();
+            myAdapter.notifyDataSetChanged();
+        });
+
+        FloatingActionButton goIntoButton = findViewById(R.id.fabGoInto);
+        goIntoButton.setOnClickListener(v -> {
+            goInto = !goInto;
+            changeList(goInto);
+        });
     }
 
-    void changeList(boolean isChecked){
-        if(isChecked) {
+    void changeList(boolean goInto){
+        if(goInto) {
             label.setText(R.string.screenBankID);
             simpleSwitch.setText(R.string.questionListViewText);
             listQuestions();
@@ -134,7 +143,7 @@ public class TeacherActivity extends AppCompatActivity implements BankAdapter.On
 
     // FR2
     void addQuestionInput(){
-        if(pressedNode >= 0 && !simpleSwitch.isChecked()) {
+        if(pressedNode >= 0 && !goInto) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             listBanks();
             builder.setTitle("Enter question for " + questionBanks.get(pressedNode).mName);
@@ -150,7 +159,7 @@ public class TeacherActivity extends AppCompatActivity implements BankAdapter.On
             builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
 
             builder.show();
-        }else if(simpleSwitch.isChecked()){
+        }else if(goInto){
             Toast toast = Toast.makeText(this, "Change list and choose bank to add question to!", Toast.LENGTH_SHORT);
             toast.show();
         } else{
@@ -301,12 +310,20 @@ public class TeacherActivity extends AppCompatActivity implements BankAdapter.On
         }
     }
 
+
     @Override
     public void onNoteClick(int position) {
         if(position == pressedNode){
             pressedNode = -1;
         }else{
             pressedNode = position;
+        }
+        if(pressedNode >= 0){
+            findViewById(R.id.fabAdd).setVisibility(View.VISIBLE);
+            findViewById(R.id.fabDelete).setVisibility(View.VISIBLE);
+        }else{
+            findViewById(R.id.fabAdd).setVisibility(View.INVISIBLE);
+            findViewById(R.id.fabDelete).setVisibility(View.INVISIBLE);
         }
         System.out.println(pressedNode);
     }
