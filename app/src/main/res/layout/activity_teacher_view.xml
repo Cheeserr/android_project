@@ -9,14 +9,6 @@
     android:paddingVertical="5dp"
     tools:context=".TeacherActivity">
 
-    <Switch
-        android:id="@+id/viewSwitch"
-        android:layout_width="150dp"
-        android:layout_height="0dp"
-        android:layout_weight="0.1"
-        android:text="@string/listViewText"
-        tools:ignore="UseSwitchCompatOrMaterialXml" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -56,12 +48,14 @@
         android:layout_weight="1"
         android:clickable="true"
         android:focusable="true"
-        />
+        >
+
+    </androidx.recyclerview.widget.RecyclerView>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.15"
+        android:layout_weight="0.1"
         android:orientation="horizontal">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -79,15 +73,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.2"
             android:clickable="true"
-            android:visibility="invisible"
-            app:srcCompat="@android:drawable/ic_input_add" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fabAddBank"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.2"
-            android:clickable="true"
             android:visibility="visible"
             app:srcCompat="@android:drawable/ic_input_add" />
 
@@ -97,7 +82,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.2"
             android:clickable="true"
-            android:visibility="visible"
+            android:visibility="invisible"
             app:srcCompat="@android:drawable/ic_media_play" />
     </LinearLayout>
 
