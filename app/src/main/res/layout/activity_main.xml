@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -14,7 +13,7 @@
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="0.3"
-        android:text="QUIZ APP"
+        android:text="@string/quiz_app_label"
         android:textAlignment="center"
         android:textSize="24sp" />
 
@@ -23,7 +22,7 @@
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:text="Teacher"
+        android:text="@string/teacherButton"
         android:textSize="20sp" />
 
     <Button
@@ -31,6 +30,6 @@
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:text="Student"
+        android:text="@string/studentButton"
         android:textSize="20sp" />
 </LinearLayout>

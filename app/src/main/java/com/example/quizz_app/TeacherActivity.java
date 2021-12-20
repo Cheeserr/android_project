@@ -17,6 +17,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.quizz_app.database.AppDatabase;
+import com.example.quizz_app.database.User;
+import com.example.quizz_app.database.UserDao;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
