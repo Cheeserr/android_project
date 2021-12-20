@@ -15,9 +15,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.quizz_app.database.AppDatabase;
-import com.example.quizz_app.database.User;
-
 import java.util.ArrayList;
 
 public class StudentActivity extends AppCompatActivity implements BankAdapter.OnNoteListener {
@@ -28,6 +25,7 @@ public class StudentActivity extends AppCompatActivity implements BankAdapter.On
     SQLiteOpenHelper databaseHelper = new DatabaseHelper(this);
 
     int pressedNode = -1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

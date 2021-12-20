@@ -11,7 +11,4 @@
     <string name="noOfQuestions">No of Questions</string>
     <string name="screenBankID">Bank ID</string>
     <string name="answerText">Answer</string>
-    <string name="teacherButton">Teacher</string>
-    <string name="quiz_app_label">QUIZ APP</string>
-    <string name="studentButton">Student</string>
 </resources>

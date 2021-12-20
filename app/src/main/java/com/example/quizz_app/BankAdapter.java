@@ -67,17 +67,26 @@ public class BankAdapter extends RecyclerView.Adapter<BankAdapter.MyViewHolder> 
         holder.extraText.setText(mQuestionBanks.get(position).mData);
 
         if(position % 2 == 1)
-        { holder.itemView.findViewById(R.id.card).setBackgroundColor(Color.WHITE); }
+        {
+            holder.itemView.findViewById(R.id.card).setBackgroundColor(Color.WHITE);
+        }
         else
-        { holder.itemView.findViewById(R.id.card).setBackgroundColor(Color.LTGRAY); }
+        {
+            holder.itemView.findViewById(R.id.card).setBackgroundColor(Color.LTGRAY);
+        }
 
 
-        if(row_index == position){ holder.itemView.findViewById(R.id.card).setBackgroundColor(Color.GREEN);
+        if(row_index == position){
+            holder.itemView.findViewById(R.id.card).setBackgroundColor(Color.GREEN);
         }else{
             if(position % 2 == 1)
-            { holder.itemView.findViewById(R.id.card).setBackgroundColor(Color.WHITE); }
+            {
+                holder.itemView.findViewById(R.id.card).setBackgroundColor(Color.WHITE);
+            }
             else
-            { holder.itemView.findViewById(R.id.card).setBackgroundColor(Color.LTGRAY); }
+            {
+                holder.itemView.findViewById(R.id.card).setBackgroundColor(Color.LTGRAY);
+            }
         }
     }
 
