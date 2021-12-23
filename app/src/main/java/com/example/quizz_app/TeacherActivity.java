@@ -29,14 +29,13 @@ public class TeacherActivity extends AppCompatActivity implements BankAdapter.On
     RecyclerView recyclerView;
 
     int pressedNode = -1;
+    int whichBank = -1;
 
     ArrayList<QuestionBank> questionBanks = new ArrayList<>();
 
     BankAdapter questionAdapter = new BankAdapter(this, questionBanks, this);
     BankAdapter myAdapter = new BankAdapter(this, questionBanks, this);
 
-    @SuppressLint("UseSwitchCompatOrMaterialCode")
-    Switch simpleSwitch;
     TextView label;
     Boolean goInto = false;
 
@@ -55,9 +54,6 @@ public class TeacherActivity extends AppCompatActivity implements BankAdapter.On
 
         label = findViewById(R.id.extraLabel);
 
-        simpleSwitch = findViewById(R.id.viewSwitch);
-
-
         FloatingActionButton deleteButton = findViewById(R.id.fabDelete);
         deleteButton.setOnClickListener(v -> {
             if(pressedNode >= 0 ){
@@ -71,39 +67,39 @@ public class TeacherActivity extends AppCompatActivity implements BankAdapter.On
 
         FloatingActionButton addButton = findViewById(R.id.fabAdd);
         addButton.setOnClickListener(v -> {
-            addQuestionInput();
-            questionAdapter.notifyDataSetChanged();
-        });
-
-        FloatingActionButton addBankButton = findViewById(R.id.fabAddBank);
-        addBankButton.setOnClickListener(v -> {
-            createBankInput();
-            myAdapter.notifyDataSetChanged();
+            if(goInto) {
+                addQuestionInput();
+                questionAdapter.notifyDataSetChanged();
+            }else{
+                createBankInput();
+                myAdapter.notifyDataSetChanged();
+            }
         });
 
         FloatingActionButton goIntoButton = findViewById(R.id.fabGoInto);
         goIntoButton.setOnClickListener(v -> {
-            goInto = !goInto;
-            changeList(goInto);
+                goInto = !goInto;
+                changeList(goInto);
         });
     }
 
     void changeList(boolean goInto){
         if(goInto) {
+            whichBank = pressedNode;
             label.setText(R.string.screenBankID);
-            simpleSwitch.setText(R.string.questionListViewText);
             listQuestions();
             recyclerView.setAdapter(questionAdapter);
             questionAdapter.notifyDataSetChanged();
         }else{
+            whichBank = -1;
             label.setText(R.string.noOfQuestions);
-            simpleSwitch.setText(R.string.listViewText);
             listBanks();
             recyclerView.setAdapter(myAdapter);
             myAdapter.notifyDataSetChanged();
         }
         BankAdapter.row_index = -1;
         pressedNode = -1;
+        buttonVisibility();
     }
 
 
@@ -126,7 +122,7 @@ public class TeacherActivity extends AppCompatActivity implements BankAdapter.On
         try {
             SQLiteDatabase db = databaseHelper.getWritableDatabase();
             ContentValues bankValues = new ContentValues();
-
+            // TODO CHECK IF BANK ALREADY EXISTS
             bankValues.put("Name", input);
             bankValues.put("NUMBEROFQUESTIONS", 0);
             db.insert("QUESTIONBANKS", null, bankValues);
@@ -138,33 +134,26 @@ public class TeacherActivity extends AppCompatActivity implements BankAdapter.On
         listBanks();
         recyclerView.setAdapter(myAdapter);
         myAdapter.notifyDataSetChanged();
-        simpleSwitch.setChecked(false);
+        goInto = false;
     }
 
     // FR2
-    void addQuestionInput(){
-        if(pressedNode >= 0 && !goInto) {
+    void addQuestionInput() {
+        if (goInto && whichBank >= 0) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             listBanks();
-            builder.setTitle("Enter question for " + questionBanks.get(pressedNode).mName);
-
+            builder.setTitle("Enter question for " + questionBanks.get(whichBank).mName);
+            listQuestions();
             final EditText input = new EditText(this);
             input.setInputType(InputType.TYPE_CLASS_TEXT);
             builder.setView(input);
 
-
             builder.setPositiveButton("Continue", (dialog, which) -> {
-                        addQuestion(input.getText().toString());
-                });
+                addQuestion(input.getText().toString());
+            });
             builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
 
             builder.show();
-        }else if(goInto){
-            Toast toast = Toast.makeText(this, "Change list and choose bank to add question to!", Toast.LENGTH_SHORT);
-            toast.show();
-        } else{
-            Toast toast = Toast.makeText(this, "Choose bank to add question to!", Toast.LENGTH_SHORT);
-            toast.show();
         }
     }
 
@@ -172,7 +161,7 @@ public class TeacherActivity extends AppCompatActivity implements BankAdapter.On
         try {
             SQLiteDatabase db = databaseHelper.getWritableDatabase();
             ContentValues questionValues = new ContentValues();
-            String bankId = questionBanks.get(pressedNode).mId;
+            String bankId = questionBanks.get(whichBank).mId;
 
             questionValues.put("QUESTION", questionInput);
             questionValues.put("BANKID", bankId);
@@ -182,7 +171,7 @@ public class TeacherActivity extends AppCompatActivity implements BankAdapter.On
             db.insert("QUESTIONS", null, questionValues);
 
             ContentValues bankValues = new ContentValues();
-            int value = Integer.parseInt(questionBanks.get(pressedNode).mData);
+            int value = Integer.parseInt(questionBanks.get(whichBank).mData);
             value++;
             bankValues.put("NUMBEROFQUESTIONS", String.valueOf(value));
             db.update("QUESTIONBANKS", bankValues, "_id = " + bankId, null);
@@ -194,7 +183,6 @@ public class TeacherActivity extends AppCompatActivity implements BankAdapter.On
         listQuestions();
         recyclerView.setAdapter(questionAdapter);
         questionAdapter.notifyDataSetChanged();
-        simpleSwitch.setChecked(true);
     }
 
     // FR3
@@ -216,7 +204,6 @@ public class TeacherActivity extends AppCompatActivity implements BankAdapter.On
             Toast toast = Toast.makeText(this, "Database unavailable", Toast.LENGTH_SHORT);
             toast.show();
         }
-
     }
     // FR3
     void removeQuestion(int id){
@@ -310,21 +297,20 @@ public class TeacherActivity extends AppCompatActivity implements BankAdapter.On
         }
     }
 
+    public void buttonVisibility(){
+        if(pressedNode >= 0){
+            findViewById(R.id.fabDelete).setVisibility(View.VISIBLE);
+            findViewById(R.id.fabGoInto).setVisibility(View.VISIBLE);
+        }else{
+            findViewById(R.id.fabDelete).setVisibility(View.INVISIBLE);
+            findViewById(R.id.fabGoInto).setVisibility(View.INVISIBLE);
+        }
+    }
 
     @Override
     public void onNoteClick(int position) {
-        if(position == pressedNode){
-            pressedNode = -1;
-        }else{
-            pressedNode = position;
-        }
-        if(pressedNode >= 0){
-            findViewById(R.id.fabAdd).setVisibility(View.VISIBLE);
-            findViewById(R.id.fabDelete).setVisibility(View.VISIBLE);
-        }else{
-            findViewById(R.id.fabAdd).setVisibility(View.INVISIBLE);
-            findViewById(R.id.fabDelete).setVisibility(View.INVISIBLE);
-        }
-        System.out.println(pressedNode);
+        if(position == pressedNode) pressedNode = -1;
+            else pressedNode = position;
+        buttonVisibility();
     }
 }
