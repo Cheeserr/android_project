@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -14,9 +13,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -87,7 +84,7 @@ public class TeacherActivity extends AppCompatActivity implements BankAdapter.On
         if(goInto) {
             whichBank = pressedNode;
             label.setText(R.string.screenBankID);
-            listQuestions();
+            listQuestions(whichBank);
             recyclerView.setAdapter(questionAdapter);
             questionAdapter.notifyDataSetChanged();
         }else{
@@ -143,14 +140,12 @@ public class TeacherActivity extends AppCompatActivity implements BankAdapter.On
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             listBanks();
             builder.setTitle("Enter question for " + questionBanks.get(whichBank).mName);
-            listQuestions();
+            listQuestions(whichBank);
             final EditText input = new EditText(this);
             input.setInputType(InputType.TYPE_CLASS_TEXT);
             builder.setView(input);
 
-            builder.setPositiveButton("Continue", (dialog, which) -> {
-                addQuestion(input.getText().toString());
-            });
+            builder.setPositiveButton("Continue", (dialog, which) -> addQuestion(input.getText().toString()));
             builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
 
             builder.show();
@@ -180,22 +175,24 @@ public class TeacherActivity extends AppCompatActivity implements BankAdapter.On
             Toast toast = Toast.makeText(this, "Database unavailable", Toast.LENGTH_SHORT);
             toast.show();
         }
-        listQuestions();
+        listQuestions(whichBank);
         recyclerView.setAdapter(questionAdapter);
         questionAdapter.notifyDataSetChanged();
     }
 
     // FR3
-    void listQuestions(){
+    void listQuestions(int bankID){
         try {
             questionBanks.clear();
             SQLiteDatabase db = databaseHelper.getReadableDatabase();
             Cursor cursor = db.query("QUESTIONS", new String[] {"_id","QUESTION","BANKID"},
                     null, null, null, null, null);
             if(cursor.moveToFirst()){
+                if(cursor.getString(2).equals(String.valueOf(bankID)))
                 questionBanks.add(new QuestionBank(cursor.getString(0), cursor.getString(1), cursor.getString(2)));
             }
             while(cursor.moveToNext()){
+                if(cursor.getString(2).equals(String.valueOf(bankID)))
                 questionBanks.add(new QuestionBank(cursor.getString(0), cursor.getString(1), cursor.getString(2)));
             }
             cursor.close();
@@ -232,7 +229,7 @@ public class TeacherActivity extends AppCompatActivity implements BankAdapter.On
                 db.update("QUESTIONBANKS", bankValues, "_id = " + questionBankId, null);
                 cursor.close();
                 db.close();
-                listQuestions();
+                listQuestions(whichBank);
                 questionAdapter.notifyDataSetChanged();
             });
             builder.setNegativeButton("No", (dialog, which) -> {
@@ -303,7 +300,15 @@ public class TeacherActivity extends AppCompatActivity implements BankAdapter.On
             findViewById(R.id.fabGoInto).setVisibility(View.VISIBLE);
         }else{
             findViewById(R.id.fabDelete).setVisibility(View.INVISIBLE);
-            findViewById(R.id.fabGoInto).setVisibility(View.INVISIBLE);
+            if(!goInto)
+                findViewById(R.id.fabGoInto).setVisibility(View.INVISIBLE);
+            else
+                findViewById(R.id.fabGoInto).setVisibility(View.VISIBLE);
+        }
+        if (!goInto) {
+            findViewById(R.id.fabGoInto).setRotation(0);
+        }else{
+            findViewById(R.id.fabGoInto).setRotation(180);
         }
     }
 

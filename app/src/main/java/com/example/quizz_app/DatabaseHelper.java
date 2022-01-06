@@ -43,11 +43,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         bankValues.put("NUMBEROFQUESTIONS", 1);
         db.insert("QUESTIONBANKS", null, bankValues);
 
+        ContentValues bankValues2 = new ContentValues();
+        bankValues2.put("NAME", "Math");
+        bankValues2.put("NUMBEROFQUESTIONS", 2);
+        db.insert("QUESTIONBANKS", null, bankValues2);
+
         ContentValues questionValues = new ContentValues();
 
         questionValues.put("BANKID", "0");
-        questionValues.put("QUESTION", "Dokad noca tupta jez");
+        questionValues.put("QUESTION", "What is Mitochondrion");
         db.insert("QUESTIONS", null, questionValues);
+
+        ContentValues questionValue2 = new ContentValues();
+
+        questionValue2.put("BANKID", "1");
+        questionValue2.put("QUESTION", "What is  2 + 2");
+        db.insert("QUESTIONS", null, questionValue2);
+
+        ContentValues questionValue3 = new ContentValues();
+
+        questionValue3.put("BANKID", "1");
+        questionValue3.put("QUESTION", "How much gram is in kilogram");
+        db.insert("QUESTIONS", null, questionValue3);
     }
 
     @Override
